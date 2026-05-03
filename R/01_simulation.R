@@ -1,7 +1,7 @@
 monty_hall <- function(switch = TRUE) {
   doors <- 1:3
-  prize <- sample(doors, 1)
-  choice <- sample(doors, 1)
+  prize <- sample(doors, 1) # 車在哪
+  choice <- sample(doors, 1) # 玩家選
   
   remaining <- doors[doors != choice & doors != prize]
   opened <- sample(remaining, 1)
