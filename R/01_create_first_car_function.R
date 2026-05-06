@@ -33,6 +33,28 @@ result
 # inverse_method  0.3367 0.2233554
 # R裡面內建的函數 0.3338 0.2223998
 
+###寫出根據inverse function產生一開始選到跑車的function###
+set.seed(1)
+first_car = function(){
+  p = 1/3 # 三門問題中，一開始選到跑車的機率是1/3
+  u = runif(1)
+  x = as.integer(u > 1-p)
+  return(x)
+}
+
+# 驗證first_car
+
+x = c()
+
+for( i in c(1:n)){
+  x[i] = first_car()
+}
+
+mean(x)
+var(x)
+
+
+
 
 
 
