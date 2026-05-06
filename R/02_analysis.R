@@ -1,16 +1,43 @@
-source("01_simulation.R")
+source("01_create_first_car_function.R")
 
-set.seed(123)
+set.seed(1)
 
-n <- 10000
+###參賽者已經選完了第一次的門，接下來要選擇第二次的門
+#先創立換門的函數
 
-# 模擬
-switch_results <- replicate(n, monty_hall(TRUE))
-stay_results   <- replicate(n, monty_hall(FALSE))
+x = first_car()
 
-# 勝率
-switch_win_rate <- mean(switch_results)
-stay_win_rate   <- mean(stay_results)
+change_door = function(x){
+  
+  if(x == 0){
+    y = 1
+  }else if(x == 1){
+    y = 0
+  }
+  
+  return(y)
+  
+}
 
-print(switch_win_rate)
-print(stay_win_rate)
+#看一下換門之後的勝率
+y = c()
+
+for (i in c(1:10000)){
+  x = first_car()
+  
+  y[i] = change_door(x)
+  
+}
+
+mean(y)
+
+
+
+
+
+
+
+
+
+
+
