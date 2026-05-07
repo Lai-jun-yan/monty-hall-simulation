@@ -31,11 +31,24 @@ for (i in c(1:10000)){
 
 mean(y)
 var(y)
-###主持人不知道門後面有甚麼###
 
+###若用control之後產生隨機變數###
+y_con = matrix(0,nrow = 5000,ncol = 2)
 
+for (i in 1:5000){
+  x_con = first_car_control_var(n=2)
+  x = c()
+  x[1] = change_door(x_con[1])
+  x[2] = change_door(x_con[2])
+  for (j in 1:2){
+      y_con[i,j] = x[j] 
+  }
+}
 
+y = c(y_con[,1],y_con[,2])
 
+mean(y)
+var(y)
 
 
 
