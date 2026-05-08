@@ -95,7 +95,7 @@ Inverse = Inverse_distribution()
 control_distribution = function(n = 1000){
   y = c()
   for (i in 1:1000){
-    x = first_car_control_var(n)
+    x = first_car_control_var(n = 1000)
     y[i] = mean(x)
   }
   result = c(mean(y),var(y))

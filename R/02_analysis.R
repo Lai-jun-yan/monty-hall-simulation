@@ -145,4 +145,9 @@ Compare_sample_odd_mean_distribution = rbind(
   "R內建" = z
 )
 
+colnames(Compare_sample_odd_mean_distribution) = c("Mean","Var")
+
 Compare_sample_odd_mean_distribution
+
+
+
