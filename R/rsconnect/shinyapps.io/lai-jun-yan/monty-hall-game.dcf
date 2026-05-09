@@ -5,6 +5,6 @@ account: lai-jun-yan
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 17327320
-bundleId: 11970534
+bundleId: 11970657
 url: https://lai-jun-yan.shinyapps.io/monty-hall-game/
 version: 1
