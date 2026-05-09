@@ -76,7 +76,7 @@ y_open = as.numeric(y_open[y_open != "主持人開到了跑車"])
 mean(y_open)
 var(y_open)
 
-
+### 要修正事後篩選的問題 ###
 
 
 
