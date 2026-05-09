@@ -2,122 +2,150 @@ library(shiny)
 
 ui <- fluidPage(
   
-  titlePanel("🚪 三門問題 Monty Hall 模擬"),
+  titlePanel("🚪 Monty Hall - Step 1 選門"),
   
-  sidebarLayout(
-    sidebarPanel(
-      h4("操作說明"),
-      p("1️⃣ 選一個門"),
-      p("2️⃣ 主持人會開一扇羊門"),
-      p("3️⃣ 決定要不要換門"),
-      p("4️⃣ 看結果"),
-      
-      actionButton("reset", "🔄 重新開始")
-    ),
-    
-    mainPanel(
-      
-      h3("請選一個門"),
-      
-      fluidRow(
-        column(4, actionButton("door1", "🚪 Door 1", width = "100%")),
-        column(4, actionButton("door2", "🚪 Door 2", width = "100%")),
-        column(4, actionButton("door3", "🚪 Door 3", width = "100%"))
-      ),
-      
-      br(),
-      h3(textOutput("status")),
-      
-      uiOutput("host_ui"),
-      uiOutput("result_ui")
-    )
-  )
+  h3("請選一扇門，然後按確定"),
+  
+  fluidRow(
+    column(4, actionButton("door1", "🚪 Door 1", width = "100%")),
+    column(4, actionButton("door2", "🚪 Door 2", width = "100%")),
+    column(4, actionButton("door3", "🚪 Door 3", width = "100%"))
+  ),
+  
+  br(),
+  actionButton("confirm", "✔ 確定選擇"),
+  actionButton("reset", "🔄 重置"),
+  
+  br(), br(),
+  h3(textOutput("status")),
+  
+  uiOutput("decision_ui"),
+  h3(textOutput("final"))
 )
 
 server <- function(input, output, session) {
   
   rv <- reactiveValues(
-    car = sample(1:3, 1),
+    temp_choice = NULL,
     choice = NULL,
     open = NULL,
-    stage = "init"
+    final_open = NULL,
+    win = NULL,        # ⭐ 新增
+    locked = FALSE,
+    stage = "choose"
   )
   
-  # 重置遊戲
-  observeEvent(input$reset, {
-    rv$car <- sample(1:3, 1)
-    rv$choice <- NULL
-    rv$open <- NULL
-    rv$stage <- "init"
-  })
+  # =========================
+  # 🎯 選門
+  # =========================
+  observeEvent(input$door1, { if (!rv$locked) rv$temp_choice <- 1 })
+  observeEvent(input$door2, { if (!rv$locked) rv$temp_choice <- 2 })
+  observeEvent(input$door3, { if (!rv$locked) rv$temp_choice <- 3 })
   
-  # 玩家選門
-  observeEvent(input$door1, { rv$choice <- 1; rv$stage <- "picked" })
-  observeEvent(input$door2, { rv$choice <- 2; rv$stage <- "picked" })
-  observeEvent(input$door3, { rv$choice <- 3; rv$stage <- "picked" })
-  
-  # 主持人開門
-  observeEvent(rv$stage == "picked", {
+  # =========================
+  # 🎯 confirm → 主持人開門
+  # =========================
+  observeEvent(input$confirm, {
     
-    req(rv$choice)
+    req(rv$temp_choice)
     
-    available <- setdiff(1:3, c(rv$choice, rv$car))
-    rv$open <- sample(available, 1)
-    
+    rv$choice <- rv$temp_choice
+    rv$locked <- TRUE
     rv$stage <- "reveal"
-  })
-  
-  # 換門
-  observeEvent(input$stay, {
-    rv$stage <- "final"
-  })
-  
-  observeEvent(input$switch, {
     
-    rv$choice <- setdiff(1:3, c(rv$choice, rv$open))
-    rv$choice <- rv$choice[1]
+    doors <- 1:3
+    candidates <- setdiff(doors, rv$choice)
     
-    rv$stage <- "final"
+    rv$open <- sample(candidates, 1)
   })
   
-  # 狀態文字
-  output$status <- renderText({
-    
-    if (rv$stage == "init") {
-      "請選一個門 🚪"
-    } else if (rv$stage == "picked") {
-      paste("你選了門", rv$choice, "，主持人正在開門...")
-    } else if (rv$stage == "reveal") {
-      paste("主持人打開門", rv$open, "是 🐐")
-    } else {
-      "結果已揭曉"
-    }
-  })
-  
-  # 是否要換門 UI
-  output$host_ui <- renderUI({
+  # =========================
+  # 🎯 UI
+  # =========================
+  output$decision_ui <- renderUI({
     
     if (rv$stage == "reveal") {
       tagList(
-        h4(paste("主持人打開門", rv$open, "是 🐐")),
-        h4("你要換門嗎？"),
-        
+        h4(paste("主持人打開 Door", rv$open)),
+        h4("要換門嗎？"),
         actionButton("switch", "🔁 換門"),
         actionButton("stay", "🙅 不換")
       )
     }
   })
   
-  # 結果
-  output$result_ui <- renderUI({
+  # =========================
+  # 🔁 換門（2/3 機率贏）
+  # =========================
+  observeEvent(input$switch, {
     
-    if (rv$stage == "final") {
+    rv$stage <- "final"
+    
+    z <- rbinom(1, 1, 2/3)
+    
+    other <- setdiff(1:3, c(rv$choice, rv$open))
+    
+    rv$final_open <- other
+    
+    rv$win <- (z == 1)
+  })
+  
+  # =========================
+  # 🙅 不換門（1/3 機率贏）
+  # =========================
+  observeEvent(input$stay, {
+    
+    rv$stage <- "final"
+    
+    z <- rbinom(1, 1, 1/3)
+    
+    rv$final_open <- rv$choice
+    
+    rv$win <- (z == 1)
+  })
+  
+  # =========================
+  # 🔄 reset
+  # =========================
+  observeEvent(input$reset, {
+    
+    rv$temp_choice <- NULL
+    rv$choice <- NULL
+    rv$open <- NULL
+    rv$final_open <- NULL
+    rv$win <- NULL
+    rv$locked <- FALSE
+    rv$stage <- "choose"
+  })
+  
+  # =========================
+  # 📌 status
+  # =========================
+  output$status <- renderText({
+    
+    if (is.null(rv$temp_choice)) {
+      "尚未選擇任何門"
       
-      if (rv$choice == rv$car) {
-        h2("🎉 恭喜你得到 🚗 跑車！")
-      } else {
-        h2(paste("🐐 你選到山羊（跑車在", rv$car, "號門）"))
-      }
+    } else if (!rv$locked) {
+      paste("你目前選擇 Door", rv$temp_choice)
+      
+    } else {
+      paste("已選 Door", rv$choice,
+            "｜主持人開 Door", rv$open)
+    }
+  })
+  
+  # =========================
+  # 🎯 final
+  # =========================
+  output$final <- renderText({
+    
+    if (rv$stage != "final") return(NULL)
+    
+    if (rv$win) {
+      paste("🎉 你贏了！Door", rv$final_open,"是跑車")
+    } else {
+      paste("🐐 你輸了！Door", rv$final_open,"是羊")
     }
   })
 }
