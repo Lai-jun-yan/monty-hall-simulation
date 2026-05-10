@@ -78,14 +78,13 @@ change_door_odd_with_control = function(){
     
     }
     
-    result = c(mean(z),var(z))
+    result = list(mean = mean(z), var = var(z), distribution = z)
     
   }
  
 
 
 x = change_door_odd_with_control()
-x
 
 
 # 不控制var
@@ -107,7 +106,7 @@ change_door_odd = function(){
     
   }
   
-  result = c(mean(z),var(z))
+  result = list(mean = mean(z), var = var(z), distribution = z)
   
 }
 
@@ -131,7 +130,7 @@ change_door_odd_R = function(){
     z[j] = mean(y_ver)
   }
   
-  result = c(mean(z),var(z))
+  result = list(mean = mean(z), var = var(z), distribution = z)
   
 }
 
@@ -140,9 +139,9 @@ z = change_door_odd_R()
 
 
 Compare_sample_odd_mean_distribution = rbind(
-  "控制" = x,
-  "不控制" = y,
-  "R內建" = z
+  "控制" = c(x["mean"],x["var"]),
+  "不控制" = c(y["mean"],y["var"]),
+  "R內建" = c(z["mean"],z["var"])
 )
 
 colnames(Compare_sample_odd_mean_distribution) = c("Mean","Var")
