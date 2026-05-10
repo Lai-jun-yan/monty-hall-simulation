@@ -71,7 +71,7 @@ R_defuilt_distribution = function(n = 1000){
     x_ver = rbinom(n, size = 1, prob = p)
     y[i] = mean(x_ver)
   }
-  result = c(mean(y),var(y))
+  result = list(mean = mean(y),var = var(y),distribution = y)
   return(result)
 }
 
@@ -85,7 +85,7 @@ Inverse_distribution = function(n = 1000){
     x = first_car(n)
     y[i] = mean(x)
   }
-  result= c(mean(y),var(y))
+  result = list(mean = mean(y),var = var(y),distribution = y)
   return(result)
 }
 
@@ -98,7 +98,7 @@ control_distribution = function(n = 1000){
     x = first_car_control_var(n = 1000)
     y[i] = mean(x)
   }
-  result = c(mean(y),var(y))
+  result = list(mean = mean(y),var = var(y),distribution = y)
   return(result)
 }
 
@@ -106,9 +106,9 @@ control = control_distribution()
 
 Compare_sample_mean_distribution = rbind(
   
-  "R內建的函數" = R_defuilt,
-  "Inverse function" = Inverse,
-  "Inverse function with controling var" = control
+  "R內建的函數" = c(R_defuilt["mean"],R_defuilt["var"]),
+  "Inverse function" = c(Inverse["mean"],Inverse["var"]),
+  "Inverse function with controling var" = c(control["mean"],control["var"])
   
 )
 
