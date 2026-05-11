@@ -148,5 +148,11 @@ colnames(Compare_sample_odd_mean_distribution) = c("Mean","Var")
 
 Compare_sample_odd_mean_distribution
 
+theta1_2 = as.numeric(Compare_sample_odd_mean_distribution[2,2])
 
+theta2_2 = as.numeric(Compare_sample_odd_mean_distribution[1,2])
+
+var_reduction_2 = ((theta1_2 - theta2_2)/theta1_2) * 100
+
+var_reduction_2
 
