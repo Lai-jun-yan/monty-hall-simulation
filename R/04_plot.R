@@ -12,8 +12,9 @@ hist(
   R_defuilt$distribution,
   breaks = 30,
   probability = TRUE,
-  main = "Distribution of Sample Mean",
-  xlab = "Sample Mean"
+  main = "Distribution of Sampling Distribution of 
+  the Estimated Winning Probability (R Bernoulli Simulation)",
+  xlab = "Probability"
 )
 
 # 加上理論常態曲線
@@ -35,8 +36,9 @@ hist(
   Inverse$distribution,
   breaks = 30,
   probability = TRUE,
-  main = "Inverse Function Sample Mean Distribution",
-  xlab = "Sample Mean"
+  main = "Distribution of Sampling Distribution of 
+  the Estimated Winning Probability(Inverse Function)",
+  xlab = "Probability"
 )
 
 curve(
@@ -57,8 +59,10 @@ hist(
   control$distribution,
   probability = TRUE,
   breaks = 30,
-  main = "Control Variance Distribution",
-  xlab = "Sample Mean"
+  main = "Distribution of Sampling Distribution of 
+  the Estimated Winning Probability(Inverse Function with 
+  Control Variance)",
+  xlab = "Probability"
 )
 
 curve(
@@ -77,8 +81,8 @@ plot(
   density(R_defuilt$distribution),
   lwd = 2,
   col = "red",
-  main = "Comparison of Sample Mean Distributions",
-  xlab = "Sample Mean",
+  main = "Comparison of three Probability Distributions",
+  xlab = "Probability",
   ylim = c(0, 120)
 )
 
