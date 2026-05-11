@@ -116,9 +116,13 @@ colnames(Compare_sample_mean_distribution) = c("Mean","Var")
 
 Compare_sample_mean_distribution
 
+theta1 = as.numeric(Compare_sample_mean_distribution[2,2])
 
+theta2 = as.numeric(Compare_sample_mean_distribution[3,2])
 
+var_reduction = ((theta1 - theta2)/theta1) * 100
 
+var_reduction
 
 
 
