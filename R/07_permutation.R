@@ -155,8 +155,10 @@ legend("topright",
        lty = c(1, 2, 1),
        bty = "n")
         
-# 看一下power，要好好想
-
+# 表格
+mean(permutation_dist)
+mean(x$distribution - y$distribution)
+sd(permutation_dist)
 
 
 
