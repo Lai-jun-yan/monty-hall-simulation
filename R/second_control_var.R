@@ -126,7 +126,7 @@ Inverse_unknown_y_control <- function(n = 10000, B = 10000, p = 1/3){
   return(y)
 }
 Inverse_unknown_y_control <- Inverse_unknown_y_control(n, B, p)
-hist(Inverse_unknown_y,
+hist(Inverse_unknown_y_control,
      main = "Sampling Distribution of the Estimated Winning Probability 
      (Inverse function)",
      xlab = "Estimated winning probability",
@@ -152,7 +152,7 @@ Control_unknown_y_control <- function(n = 10000, B = 10000, p = 1/3){
   return(y)
 }
 Control_unknown_y_control <- Control_unknown_y_control(n, B, p)
-hist(Control_unknown_y,
+hist(Control_unknown_y_control,
      main = "Sampling Distribution of the Estimated Winning Probability
      (Inverse function with control variance)",
      xlab = "Estimated winning probability",
