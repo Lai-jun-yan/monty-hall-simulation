@@ -1,3 +1,7 @@
+source("01_create_first_car_function.R")
+source("02_analysis.R")
+source("03_adjust_chage_door_odd.R")
+
 ###第二次控制
 
 # 第二次control

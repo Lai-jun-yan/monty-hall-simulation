@@ -116,17 +116,13 @@ change_known <- function(x){
 # 主持人不知道車在哪：換門結果
 # 1 = 換門贏，0 = 換門輸
 change_unknown <- function(x){
-  y <- numeric(length(x))
-  for(i in 1:length(x)){
-    if(x[i] == 1){
-      y[i] <- 0
-    }else{
-      open_goat <- rbinom(1, size = 1, prob = 1/2) #改
-      y[i] <- open_goat
-    }
-  }
+
+  x_1 = x[x==1]
+  y_1 = numeric(length(x_1))
+  x_2 = x[x!=1]
+  open_goat = rbinom(n = length(x_2),size = 1,prob = 0.5)
+  y = c(y_1,open_goat)
   
-  return(y)
 }
 
 # 第二次control
@@ -392,20 +388,20 @@ R_default_unknown_y <- function(n = 10000, B = 10000, p = 1/3){
   
   return(y)
 }
-R_default_unknown_y <- R_default_unknown_y(n, B, p)
-hist(R_default_unknown_y,
+y <- R_default_unknown_y(n, B, p)
+hist(y,
      main = "Sampling Distribution of the Estimated Winning Probability 
      (R Bernoulli Simulation)",
      xlab = "Estimated winning probability",
      probability = TRUE)
 
-abline(v = mean(R_default_unknown_y),
+abline(v = mean(y),
        col = "yellow",
        lty = 2,
        lwd = 2)
-text(x = mean(R_default_unknown_y) + 0.002,
-     y = max(hist(R_default_unknown_y, plot = FALSE)$density) * 0.9,
-     labels = paste0("Mean = ", round(mean(R_default_unknown_y), 4)),
+text(x = mean(y) + 0.002,
+     y = max(hist(y, plot = FALSE)$density) * 0.9,
+     labels = paste0("Mean = ", round(mean(y), 4)),
      pos = 4)
 
 
