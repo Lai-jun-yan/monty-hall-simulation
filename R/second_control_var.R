@@ -197,6 +197,13 @@ for(i in 1:3){
   
 }
 
+# 第二次控制var下降
+variance_reduction_3(Inverse_unknown_y_control,Control_unknown_y_control)
+# 三個分布的summary
+for (i in 1:3){
+  cat(mean(y[[i]]),var(y[[i]]),"")
+}
+
 #畫圖
 
 for (i in 1:3){
@@ -248,9 +255,6 @@ legend("topright",
        col = c("red", "blue", "darkgreen"),
        lwd = 2,
        lty = c(1, 2, 3))
-
-
-
 
 
 

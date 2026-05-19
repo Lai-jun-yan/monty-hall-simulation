@@ -125,6 +125,18 @@ change_unknown <- function(x){
   
 }
 
+r_2_control = function(n = 1000){
+  
+  p = 1/2 
+  u = runif(n/2)
+  u_2 = 1-u 
+  U = c(u,u_2)
+  x = as.integer(U > 1-p)
+  return(x)
+  
+  
+}
+
 # 第二次control
 change_unknown_control = function(x){
   
@@ -460,7 +472,7 @@ text(x = mean(Control_unknown_y) + 0.002,
 variance_reduction_2 <- (var(Inverse_unknown_y) - var(Control_unknown_y)) / var(Inverse_unknown_y) * 100
 variance_reduction_2
 
-d1 <- density(R_default_unknown_y)
+d1 <- density(y)
 d2 <- density(Inverse_unknown_y)
 d3 <- density(Control_unknown_y)
 plot(d1,
