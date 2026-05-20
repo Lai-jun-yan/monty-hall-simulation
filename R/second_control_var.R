@@ -178,14 +178,70 @@ variance_reduction_3 = function(x,y){
 
 #只有第1次控制
 R_default_unknown_y = R_default_unknown_y(n, B, p)
+
+Inverse_unknown_y <- function(n = 10000, B = 10000, p = 1/3){
+  y <- numeric(B)
+  for(i in 1:B){
+    x <- first_car(n, p)
+    result <- change_unknown(x)
+    y[i] <- mean(result)
+  }
+  return(y)
+}
+
 Inverse_unknown_y <- Inverse_unknown_y(n, B, p)
+
+Control_unknown_y <- function(n = 10000, B = 10000, p = 1/3){
+  y <- numeric(B)
+  for(i in 1:B){
+    x <- first_car_control_var(n, p)
+    result <- change_unknown(x)
+    y[i] <- mean(result)
+  }
+  return(y)
+}
+
 Control_unknown_y <- Control_unknown_y(n, B, p)
 
 x = list(R_default_unknown_y,Inverse_unknown_y,Control_unknown_y)
 
 #兩次皆有控制
+
+R_default_unknown_y_control <- function(n = 10000, B = 10000, p = 1/3){
+  y <- numeric(B)
+  for(i in 1:B){
+    x <- rbinom(n, size = 1, prob = p)
+    result <- change_unknown_control(x)
+    y[i] <- mean(result)
+  }
+  
+  return(y)
+}
+
 R_default_unknown_y_control <- R_default_unknown_y_control(n, B, p)
+
+Inverse_unknown_y_control <- function(n = 10000, B = 10000, p = 1/3){
+  y <- numeric(B)
+  for(i in 1:B){
+    x <- first_car(n, p)
+    result <- change_unknown_control(x)
+    y[i] <- mean(result)
+  }
+  return(y)
+}
+
 Inverse_unknown_y_control <- Inverse_unknown_y_control(n, B, p)
+
+Control_unknown_y_control <- function(n = 10000, B = 10000, p = 1/3){
+  y <- numeric(B)
+  for(i in 1:B){
+    x <- first_car_control_var(n, p)
+    result <- change_unknown_control(x)
+    y[i] <- mean(result)
+  }
+  return(y)
+}
+
 Control_unknown_y_control <- Control_unknown_y_control(n, B, p)
 
 y = list(R_default_unknown_y_control,Inverse_unknown_y_control,Control_unknown_y_control)
