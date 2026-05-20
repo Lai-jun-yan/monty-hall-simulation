@@ -20,7 +20,7 @@ for (i in 1:1000){
 }
 
 # 定義posterior
-posterior = function(theta, y){
+posterior = function(theta, y, a = 1, b = 1){
   
   if(theta <= 0 || theta >= 1){
     return(0)
@@ -29,12 +29,16 @@ posterior = function(theta, y){
   k = sum(y)
   n = length(y)
   
-  return(theta^k * (1-theta)^(n-k))# 看一下根據這筆資料，theta有多合理。跟Likelihood有異曲同工之妙。
+  likelihood = theta^k * (1-theta)^(n-k) # 這個資料下，這個theta出現的機率
+  
+  prior = theta^(a-1) * (1-theta)^(b-1) # 有多相信目前這個theta
+  
+  return(likelihood * prior)# 看一下根據這筆資料，theta有多合理。
 }
 
 
 # MH sampler
-mh_sampler = function(y, n_iter = 10000, sigma = 0.05){
+mh_sampler = function(y, a = 1, b = 1, n_iter = 10000, sigma = 0.05){
   
   samples = numeric(n_iter)
   
@@ -54,8 +58,8 @@ mh_sampler = function(y, n_iter = 10000, sigma = 0.05){
     
     # acceptance ratio
     r =
-      posterior(theta_prop, y) /
-      posterior(theta_current, y)
+      posterior(theta_prop, y, a, b) /
+      posterior(theta_current, y, a, b)
     
     alpha = min(1,r) # 新的theta如果比較好，就直接接受新的theta;
                     # 若比較差，則根據一定比例去決定是否移動。
@@ -71,7 +75,8 @@ mh_sampler = function(y, n_iter = 10000, sigma = 0.05){
 }
 
 ## 畫圖
-samples = mh_sampler(y_con,sigma = 0.05)# sigma可以調整，最好是0.05
+samples = mh_sampler(y_con, a = 10, b = 10, sigma = 0.05)# sigma可以調整，最好是0.05
+                                                      # a、b皆可以改
 
 # 震盪圖
 plot(samples,
