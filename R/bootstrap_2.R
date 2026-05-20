@@ -1,20 +1,48 @@
 source("01_create_first_car_function.R")
 source("02_analysis.R")
+source("03_adjust_chage_door_odd.R")
+source("second_control_var.R")
+
 
 
 ###有一百個人玩了遊戲，每個人都換門了1000次###
 
-#使用inverse_control做
+# 換門
+change_unknown_control = function(x){
+  
+  x_1 = x[x==1]
+  y_1 = numeric(length(x_1))
+  x_2 = x[x!=1]
+  open_goat = r_2_control(n = length(x_2))
+  y = c(y_1,open_goat)
+  
+  return(y)
+  
+}
+
+#MC
+n <- 1000
+y <- numeric(n)
+
+for(i in 1:n){
+  x <- first_car_control_var(n = 1000)
+  y[i] <- mean(change_unknown_control(x))
+}
+
 
 people = c()
 
 for (i in 1:100){
   
-  x = change_door_odd_with_control()
+  n <- 1000
+  y <- numeric(n)
   
-  y = as.numeric(x["mean"])
+  for(j in 1:n){
+    x <- first_car_control_var(n = 1000)
+    y[j] <- mean(change_unknown_control(x))
+  }
   
-  people[i] = y
+  people[i] = mean(y)
   
 }
 
@@ -77,8 +105,3 @@ legend(
   lwd = 2,
   lty = c(1, 1, 2)
 )
-
-
-
-
-
