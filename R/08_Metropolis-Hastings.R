@@ -1,98 +1,105 @@
-set.seed(123)
-
-# =========================
-# 1. 模擬三門問題資料
-# =========================
-N <- 1000  # 做幾次遊戲
-
-# 理論上換門勝率 = 2/3
-true_p <- 2/3
-
-# 模擬結果 (1 = win, 0 = lose)
-x <- rbinom(N, size = 1, prob = true_p)
-
-S <- sum(x)  # win 次數
-
-# =========================
-# 2. MCMC 設定 (Metropolis-Hastings)
-# =========================
-
-n_iter <- 10000
-p_chain <- numeric(n_iter)
-
-# 初始值
-p_chain[1] <- 0.5
-
-# proposal sd
-sigma <- 0.05
-
-# likelihood function (Bernoulli)
-log_likelihood <- function(p, S, N) {
-  if (p <= 0 || p >= 1) return(-Inf)
-  S * log(p) + (N - S) * log(1 - p)
+first_car_control_var = function(n = 1000){
+  p = 1/3 # 三門問題中，一開始選到跑車的機率是1/3
+  u = runif(n/2)
+  u_2 = 1-u # 使用chapter6 27頁的方法
+  U = c(u,u_2)
+  x = as.integer(U > 1-p)
+  return(x)
 }
 
-# prior Beta(1,1) => constant => ignore or include log prior
-log_prior <- function(p) {
-  if (p <= 0 || p >= 1) return(-Inf)
-  0  # uniform
+
+# 用前面定義的函數模擬真實換門之後的勝率
+y_con = c()
+
+x_con = first_car_control_var(n = 1000)
+
+for (i in 1:1000){
+  
+  y_con[i] = change_door(x_con[i])
+  
 }
 
-# =========================
-# 3. MCMC sampling
-# =========================
-for (t in 2:n_iter) {
+# 定義posterior
+posterior = function(theta, y){
   
-  current_p <- p_chain[t - 1]
-  
-  # proposal
-  p_star <- rnorm(1, mean = current_p, sd = sigma)
-  
-  # symmetric proposal => MH ratio only likelihood + prior
-  log_r <- (log_likelihood(p_star, S, N) +
-              log_prior(p_star)) -
-    (log_likelihood(current_p, S, N) +
-       log_prior(current_p))
-  
-  # acceptance probability
-  if (log(runif(1)) < log_r) {
-    p_chain[t] <- p_star
-  } else {
-    p_chain[t] <- current_p
+  if(theta <= 0 || theta >= 1){
+    return(0)
   }
+  
+  k = sum(y)
+  n = length(y)
+  
+  return(theta^k * (1-theta)^(n-k))# 看一下根據這筆資料，theta有多合理。跟Likelihood有異曲同工之妙。
 }
 
-# =========================
-# 4. burn-in
-# =========================
-burn <- 2000
-posterior <- p_chain[(burn + 1):n_iter]
 
-# =========================
-# 5. 結果輸出
-# =========================
+# MH sampler
+mh_sampler = function(y, n_iter = 10000, sigma = 0.05){
+  
+  samples = numeric(n_iter)
+  
+  theta_current = 0.5# 設定與一般人想像的一樣的機率，換門與不換門的機率是一樣
+  
+  for(i in 1:n_iter){
+    
+    # proposal
+    theta_prop = theta_current + rnorm(1,0,sigma)# 移動的步伐
+    
+    # reject outside [0,1]
+    if(theta_prop <= 0 || theta_prop >= 1){
+      
+      samples[i] = theta_current
+      next
+    }
+    
+    # acceptance ratio
+    r =
+      posterior(theta_prop, y) /
+      posterior(theta_current, y)
+    
+    alpha = min(1,r) # 新的theta如果比較好，就直接接受新的theta;
+                    # 若比較差，則根據一定比例去決定是否移動。
+    
+    if(runif(1) < alpha){
+      theta_current = theta_prop
+    }
+    
+    samples[i] = theta_current
+  }
+  
+  return(samples)
+}
 
-# posterior mean
-mean(posterior)
+## 畫圖
+samples = mh_sampler(y_con,sigma = 0.05)# sigma可以調整，最好是0.05
 
-# credible interval
-quantile(posterior, c(0.025, 0.5, 0.975))
+# 震盪圖
+plot(samples,
+     type="l",
+     col="blue",
+     lwd=1,
+     xlab="Iteration",
+     ylab=expression(theta),
+     main="MH Trace Plot")
 
-# =========================
-# 6. 畫圖
-# =========================
+abline(h=2/3,
+       col="red",
+       lwd=2)
 
-par(mfrow = c(1,2))
+# 分布圖
 
-# trace plot
-plot(p_chain, type = "l",
-     main = "Trace plot of p",
-     ylab = "p", xlab = "iteration")
+hist(samples,
+     breaks = 50,
+     probability = TRUE)
 
-abline(h = 2/3, col = "red", lwd = 2)
+abline(v = 2/3,col="red",lwd=2)
 
-# posterior density
-plot(density(posterior),
-     main = "Posterior of p (Switching strategy)",
-     xlab = "p")
-abline(v = 2/3, col = "red", lwd = 2)
+
+
+
+
+
+
+
+
+
