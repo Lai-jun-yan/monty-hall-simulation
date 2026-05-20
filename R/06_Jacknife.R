@@ -16,7 +16,7 @@ for(i in 1:n){
   jack_mean[i] = mean(jack_sample)
 }
 
-jack_mean
+mean(jack_mean)
 
 # 算SE
 jack_se = sqrt(
